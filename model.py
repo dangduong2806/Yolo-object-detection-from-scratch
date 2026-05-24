@@ -279,4 +279,16 @@ class YOLOv3(nn.Module):
         
         return outputs
 
+if __name__ == "__main__":
+    num_classes = 5
+    image_size = 416
+
+    model = YOLOv3(in_channels=3, num_classes=num_classes)
+
+    x = torch.randn(2, 3, image_size, image_size)
+
+    outputs = model(x)
+
+    for out in outputs:
+        print(out.shape)
 
