@@ -1,0 +1,40 @@
+project:
+  save_dir: "checkpoints"
+  best_model_name: "best_yolov3.pth"
+  last_model_name: "last_yolov3.pth"
+
+data:
+  root_dir: ""
+  train_json: ""
+  val_json: ""
+  image_size: 416
+  num_classes: 5
+  scales: [13, 26, 52]
+  use_letterbox: True
+  ignore_iou_thresh: 0.5
+
+anchors:
+  # scale 13x13: object lớn
+  - [[116, 90], [156, 198], [373, 326]]
+  # scale 26x26: object vừa
+  - [[30, 61], [62, 45], [59, 119]]
+  # scale 52x52: object nhỏ
+  - [[10, 13], [16, 30], [33, 23]]
+
+train:
+  epochs: 100
+  batch_size: 8
+  num_workers: 0 # chạy trên kaggle
+  learning_rate: 0.0001
+  weight_decay: 0.0005
+  device: "cuda"
+  mixed_precision: True
+  gradient_clip_norm: 10.0
+  seed: 42
+
+loss:
+  lambda_box: 10.0
+  lambda_obj: 1.0
+  lambda_noobj: 10.0
+  lambda_class: 1.0
+  

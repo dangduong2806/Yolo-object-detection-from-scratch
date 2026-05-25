@@ -391,4 +391,33 @@ class YOLODataset(Dataset):
 
         return image_tensor, targets
     
-    
+
+
+
+# Test thử
+# from torch.utils.data import DataLoader
+
+# train_dataset = YOLODataset(
+#     json_path="train.json",
+#     root_dir="/path/to/dataset",
+#     anchors=ANCHORS,
+#     image_size=IMAGE_SIZE,
+#     scales=SCALES,
+#     use_letterbox=True,
+# )
+
+# image, targets = train_dataset[0]
+
+# print(image.shape)
+# print(targets[0].shape)
+# print(targets[1].shape)
+# print(targets[2].shape)
+
+# for idx, target in enumerate(targets):
+#     print(
+#         f"Scale {SCALES[idx]}:",
+#         "positive boxes =",
+#         (target[..., 0] == 1).sum().item(),
+#         "ignored boxes =",
+#         (target[..., 0] == -1).sum().item()
+#     )
