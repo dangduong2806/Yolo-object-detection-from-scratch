@@ -217,7 +217,7 @@ def validate_one_epoch(
             loss_fn=loss_fn
         )
 
-        running_loss += loss.items()
+        running_loss += loss.item()
 
         for key in running_logs:
             running_logs[key] += loss_log[key]
