@@ -22,7 +22,7 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 100
+  epochs: 2
   batch_size: 8
   num_workers: 0 # chạy trên kaggle
   learning_rate: 0.0001
