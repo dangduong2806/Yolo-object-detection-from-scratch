@@ -4,9 +4,9 @@ project:
   last_model_name: "last_yolov3.pth"
 
 data:
-  root_dir: ""
-  train_json: ""
-  val_json: ""
+  root_dir: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public"
+  train_json: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public/annotations/train.json"
+  val_json: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public/annotations/val.json"
   image_size: 416
   num_classes: 5
   scales: [13, 26, 52]
@@ -37,4 +37,3 @@ loss:
   lambda_obj: 1.0
   lambda_noobj: 10.0
   lambda_class: 1.0
-  
