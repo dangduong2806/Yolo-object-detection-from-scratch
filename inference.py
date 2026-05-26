@@ -453,6 +453,21 @@ def run_inference(
 
     outputs = model(image_tensor)
 
+    print("\n===== RAW OUTPUT DEBUG =====")
+    for scale_idx, output in enumerate(outputs):
+        # output shape: [1, 3, S, S, 10]
+        obj = torch.sigmoid(output[..., 0])
+        cls = torch.sigmoid(output[..., 5:])
+
+        best_cls_prob, best_cls_id = cls.max(dim=-1)
+        score = obj * best_cls_prob
+
+        print(f"Scale {scale_idx}")
+        print("  max objectness:", obj.max().item())
+        print("  mean objectness:", obj.mean().item())
+        print("  max class prob:", best_cls_prob.max().item())
+        print("  max final score:", score.max().item())
+
     detections = decode_predictions(
         outputs=outputs,
         anchors_normalized=anchors_normalized,
