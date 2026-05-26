@@ -37,7 +37,7 @@ def load_class_names(config):
     return [f"class_{i}" for i in range(num_classes)]
 
 def sigmoid(x):
-    return torch.tensor(x)
+    return torch.sigmoid(x)
 
 def letterbox_image(image, image_size):
     """

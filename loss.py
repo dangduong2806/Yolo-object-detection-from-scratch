@@ -82,8 +82,8 @@ class YOLOv3Loss(nn.Module):
         anchors = anchors.to(device)
 
         # Mask object/ no-object
-        obj_mask = target[..., 0] = 1
-        noobj_mask = target[..., 0] = 0
+        obj_mask = target[..., 0] == 1
+        noobj_mask = target[..., 0] == 0
 
         # 1. No-objectness loss
         # Anchor ko có object thì objectness target  = 0

@@ -3,13 +3,33 @@ import random
 import yaml
 import torch
 import numpy as np
+import json
 
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from PIL import Image
+from pathlib import Path
 
 from model import YOLOv3
 from loss import YOLOv3Loss
 from dataset import YOLODataset
+
+from inference import (
+    letterbox_image,
+    image_to_tensor,
+    prepare_anchors,
+    decode_predictions,
+    nms_classwise,
+    map_box_to_original_image,
+    load_class_names
+)
+
+from tools.evaluate_predictions import (
+    load_json,
+    validate_ground_truth,
+    normalize_predictions,
+    evaluate,
+)
 
 def set_seed(seed):
     random.seed(seed)
@@ -184,6 +204,115 @@ def train_one_epoch(
     return epoch_loss, epoch_logs
 
 @torch.no_grad()
+def build_val_predictions(
+    model,
+    config,
+    device,
+    conf_thresh=0.25,
+    iou_thresh=0.5,
+):
+    model.eval()
+    root_dir = config["data"]["root_dir"]
+    val_json = config["data"]["val_json"]
+    image_size = config["data"]["image_size"]
+    anchors = config["anchors"]
+
+    class_names = load_class_names(config)
+
+    anchors_normalized = prepare_anchors(
+        anchors=anchors,
+        image_size=image_size,
+        device=device,
+    )
+
+    with open(val_json, "r", encoding="utf-8") as f:
+        val_data = json.load(f)
+    
+    predictions_json = []
+
+    for image_info in val_data["images"]:
+        image_id = image_info["id"]
+        file_name = image_info["file_name"]
+
+        image_path = os.path.join(root_dir, file_name)
+
+        original_image = Image.open(image_path).convert("RGB")
+
+        letterboxed_image, meta = letterbox_image(
+            original_image,
+            image_size=image_size,
+        )
+
+        image_tensor = image_to_tensor(letterboxed_image).to(device)
+
+        outputs = model(image_tensor)
+
+        detections = decode_predictions(
+            outputs=outputs,
+            anchors_normalized=anchors_normalized,
+            conf_thresh=conf_thresh,
+        )
+
+        detections = nms_classwise(
+            detections=detections,
+            iou_thresh=iou_thresh,
+        )
+
+        boxes = []
+
+        for det in detections:
+            box_original = map_box_to_original_image(
+                det["box"],
+                meta,
+            )
+
+            class_id = det["class_id"]
+
+            boxes.append({
+                "class": class_names[class_id],
+                "confidence": float(det["score"]),
+                "bbox": [
+                    float(box_original[0]),
+                    float(box_original[1]),
+                    float(box_original[2]),
+                    float(box_original[3]),
+                ],
+            })
+
+        predictions_json.append({
+            "image_id": image_id,
+            "boxes": boxes,
+        })
+
+    return predictions_json
+
+def compute_map50_from_predictions(
+        val_json_path,
+        predictions_json,
+        iou_threshold=0.5,
+):
+    ground_truth = load_json(Path(val_json_path))
+
+    classes, image_info = validate_ground_truth(ground_truth)
+
+    normalized_predictions = normalize_predictions(
+        predictions_json,
+        classes=classes,
+        image_info=image_info,
+        max_detections_per_image=100,
+        require_complete=True,
+    )
+
+    metrics = evaluate(
+        ground_truth=ground_truth,
+        predictions=normalized_predictions,
+        classes=classes,
+        iou_threshold=iou_threshold,
+    )
+
+    return metrics
+
+@torch.no_grad()
 def validate_one_epoch(
     model,
     val_loader,
@@ -247,6 +376,7 @@ def save_checkpoint(
         epoch,
         train_loss,
         val_loss,
+        map50,
         config,
 ):
     checkpoint = {
@@ -255,6 +385,7 @@ def save_checkpoint(
         "optimizer_state_dict": optimizer.state_dict(),
         "train_loss": train_loss,
         "val_loss": val_loss,
+        "map50": map50,
         "config": config
     }
 
@@ -278,14 +409,19 @@ def main():
     save_dir = config["project"]["save_dir"]
     os.makedirs(save_dir, exist_ok=True)
 
-    best_model_path = os.path.join(
+    best_loss_model_path = os.path.join(
         save_dir,
-        config["project"]["best_model_name"]
+        config["project"]["best_loss_model_name"]
     )
 
     last_model_path = os.path.join(
         save_dir,
         config["project"]["last_model_name"]
+    )
+
+    best_map_model_path = os.path.join(
+        save_dir,
+        config["project"]["best_map_model_name"]
     )
 
     image_size = config["data"]["image_size"]
@@ -365,6 +501,10 @@ def main():
     scaler = torch.cuda.amp.GradScaler() if use_amp else None
 
     best_val_loss = float("inf")
+    best_map50 = 0.0
+    best_val_loss_at_best_map = float("inf")
+
+    map_eval_interval = config["train"]["map_eval_interval"]
 
     epochs = config["train"]["epochs"]
 
@@ -396,10 +536,49 @@ def main():
             device=device
         )
 
-        print(
-            f"Train loss: {train_loss:.4f} | "
-            f"Val loss: {val_loss:.4f}"
+        should_eval_map = (
+            epoch == 1
+            or epoch % map_eval_interval == 0
+            or epoch == epochs
         )
+
+        map50 = None
+        micro_precision = None
+        micro_recall = None
+
+        if should_eval_map:
+            predictions_json = build_val_predictions(
+                model=model,
+                config=config,
+                device=device,
+                conf_thresh=0.25,
+                iou_thresh=0.5
+            )
+
+            map_metrics = compute_map50_from_predictions(
+                val_json_path=config["data"]["val_json"],
+                predictions_json=predictions_json,
+                iou_threshold=0.5,
+            )
+
+            map50 = map_metrics["mAP@0.5"]
+            micro_precision = map_metrics["micro_precision"]
+            micro_recall = map_metrics["micro_recall"]
+
+        if should_eval_map:
+            print(
+                f"Train loss: {train_loss:.4f} | "
+                f"Val loss: {val_loss:.4f} | "
+                f"mAP@0.5: {map50:.4f} | "
+                f"precision: {micro_precision:.4f} | "
+                f"recall: {micro_recall:.4f}"
+            )
+        else:
+            print(
+                f"Train loss: {train_loss:.4f} | "
+                f"Val loss: {val_loss:.4f} | "
+                f"mAP@0.5: skipped"
+            )
 
         print(
             "Train details: "
@@ -417,6 +596,7 @@ def main():
             f"class={val_logs['class_loss']:.4f}"
         )
         
+        # save last model
         save_checkpoint(
             save_path=last_model_path,
             model=model,
@@ -424,30 +604,61 @@ def main():
             epoch=epoch,
             train_loss=train_loss,
             val_loss=val_loss,
+            map50=map50,
             config=config,
         )
         
+        # best loss checkpoint
         if val_loss < best_val_loss:
             best_val_loss = val_loss
 
             save_checkpoint(
-                save_path=best_model_path,
+                save_path=best_loss_model_path,
                 model=model,
                 optimizer=optimizer,
                 epoch=epoch,
                 train_loss=train_loss,
                 val_loss=val_loss,
+                map50=map50,
                 config=config,
             )
 
             print(
-                f"Saved best model: {best_model_path} "
-                f"with val_loss={best_val_loss:.4f}"
+                f"Saved best loss model: {best_loss_model_path} "
+                f"with best val_loss={best_val_loss:.4f}"
             )
+
+        # best MAP checkpoint
+        if should_eval_map:
+            eps = 1e-4
+            is_best_map = (
+                map50 > best_map50 + eps
+                or (
+                    abs(map50 - best_map50) <= eps
+                    and val_loss < best_val_loss_at_best_map
+                )
+            )
+
+            if is_best_map:
+                best_map50 = map50
+                best_val_loss_at_best_map = val_loss
+
+                save_checkpoint(
+                    save_path=best_map_model_path,
+                    model=model,
+                    optimizer=optimizer,
+                    epoch=epoch,
+                    train_loss=train_loss,
+                    val_loss=best_val_loss_at_best_map,
+                    map50=best_map50,
+                    config=config,
+                )
 
     print("\nTraining completed.")
     print(f"Best val loss: {best_val_loss:.4f}")
-    print(f"Best model saved at: {best_model_path}")
+    print(f"Best val loss at best MAP@0.5: {best_val_loss_at_best_map:.4f}")
+    print(f"Best MAP@0.5 score: {best_map50:.4f}")
+    print(f"Best model saved at: {best_map_model_path}")
 
 
 if __name__ == "__main__":

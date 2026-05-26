@@ -1,7 +1,8 @@
 project:
   save_dir: "checkpoints"
-  best_model_name: "best_yolov3.pth"
+  best_loss_model_name: "best_loss_yolov3.pth"
   last_model_name: "last_yolov3.pth"
+  best_map_model_name: "best_map_yolov3.pth"
 
 data:
   root_dir: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public"
@@ -22,8 +23,8 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 10
-  batch_size: 8
+  epochs: 80
+  batch_size: 16
   num_workers: 0 # chạy trên kaggle
   learning_rate: 0.0001
   weight_decay: 0.0005
@@ -31,9 +32,10 @@ train:
   mixed_precision: True
   gradient_clip_norm: 10.0
   seed: 42
+  map_eval_interval: 5
 
 loss:
   lambda_box: 10.0
   lambda_obj: 1.0
-  lambda_noobj: 10.0
+  lambda_noobj: 1.0
   lambda_class: 1.0
