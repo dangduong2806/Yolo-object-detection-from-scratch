@@ -266,6 +266,10 @@ def build_val_predictions(
                 meta,
             )
 
+            x1, y1, x2, y2 = box_original
+            if x2 <= x1 or y2 <= y1:
+                continue
+
             class_id = det["class_id"]
 
             boxes.append({
