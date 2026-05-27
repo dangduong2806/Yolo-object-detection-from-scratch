@@ -115,7 +115,7 @@ def main():
         config=config,
         device=device,
         conf_thresh=args.conf_thresh,
-        nms_iou_thresh=args.nms_iou_thresh,
+        iou_thresh=args.nms_iou_thresh,
     )
 
     metrics = compute_metrics(
