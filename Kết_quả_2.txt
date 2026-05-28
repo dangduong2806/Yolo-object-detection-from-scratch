@@ -1,0 +1,55 @@
+--conf-thresh 0.5 \
+  --nms-iou-thresh 0.5 \
+  --eval-iou-thresh 0.5 
+
+  ===== Overall =====
+mAP@0.5        : 0.634634
+micro precision: 0.127452
+micro recall   : 0.958372
+GT boxes       : 10642
+Pred boxes     : 80022
+
+===== Per class =====
+class                    AP@0.5  precision     recall     GT   Pred     TP     FP
+cat                    0.425113   0.167096   0.779112    833   3884    649   3235
+dog                    0.626837   0.202366   0.964981   1028   4902    992   3910
+car                    0.661813   0.079668   0.968633   1339  16280   1297  14983
+chair                  0.694270   0.092485   0.949163   1613  16554   1531  15023
+person                 0.765136   0.149211   0.983016   5829  38402   5730  32672
+
+--conf-thresh 0.7 \
+  --nms-iou-thresh 0.5 \
+  --eval-iou-thresh 0.5 
+
+  ===== Overall =====
+mAP@0.5        : 0.617872
+micro precision: 0.187970
+micro recall   : 0.925296
+GT boxes       : 10642
+Pred boxes     : 52386
+
+===== Per class =====
+class                    AP@0.5  precision     recall     GT   Pred     TP     FP
+cat                    0.370169   0.345185   0.559424    833   1350    466    884
+dog                    0.602827   0.372084   0.884241   1028   2443    909   1534
+car                    0.661241   0.121169   0.962659   1339  10638   1289   9349
+chair                  0.690977   0.152261   0.920645   1613   9753   1485   8268
+person                 0.764147   0.202042   0.977526   5829  28202   5698  22504
+
+--conf-thresh 0.7 \
+  --nms-iou-thresh 0.3 \
+  --eval-iou-thresh 0.5 
+  ===== Overall =====
+mAP@0.5        : 0.625724
+micro precision: 0.300680
+micro recall   : 0.851438
+GT boxes       : 10642
+Pred boxes     : 30135
+
+===== Per class =====
+class                    AP@0.5  precision     recall     GT   Pred     TP     FP
+cat                    0.382070   0.426818   0.542617    833   1059    452    607
+dog                    0.601911   0.428571   0.855058   1028   2051    879   1172
+chair                  0.685315   0.207969   0.841290   1613   6525   1357   5168
+car                    0.707871   0.204191   0.880508   1339   5774   1179   4595
+person                 0.751451   0.352709   0.891062   5829  14726   5194   9532
