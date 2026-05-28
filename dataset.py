@@ -261,7 +261,13 @@ class YOLODataset(Dataset):
             for S in self.scales
         ]
 
-        for box in boxes_yolo:
+        if len(boxes_yolo) == 0:
+            return tuple(targets)
+        
+        positive_slots = set()
+
+        # Pass 1: assign exactly one positive anchor per GT if possible.
+        for gt_idx, box in enumerate(boxes_yolo):
             class_id, x, y, w, h = box
 
             class_id = int(class_id)
@@ -278,7 +284,7 @@ class YOLODataset(Dataset):
 
             anchor_indices = iou_anchors.argsort(descending=True)
 
-            has_anchor = [False, False, False]
+            assigned = False
 
             for anchor_idx in anchor_indices:
                 anchor_idx = int(anchor_idx)
@@ -295,41 +301,73 @@ class YOLODataset(Dataset):
                 i = min(S - 1, max(0, i))
                 j = min(S - 1, max(0, j))
 
-                anchor_taken = targets[scale_idx][
+                slot = (scale_idx, anchor_on_scale, i, j)
+
+                if slot in positive_slots:
+                    continue
+                    
+                if targets[scale_idx][anchor_on_scale, i, j, 0] != 0:
+                    continue
+
+                
+                # target[..., 0] = 1 # objectness
+                targets[scale_idx][
                     anchor_on_scale, i, j, 0
-                ]
+                ] = 1.0
 
-                if anchor_taken == 0 and not has_anchor[scale_idx]:
-                    # target[..., 0] = 1 # objectness
-                    targets[scale_idx][
-                        anchor_on_scale, i, j, 0
-                    ] = 1.0
+                x_cell = S * x - j
+                y_cell = S * y - i
+                w_cell = w * S
+                h_cell = h * S
 
-                    x_cell = S * x - j
-                    y_cell = S * y - i
-                    w_cell = w * S
-                    h_cell = h * S
+                targets[scale_idx][
+                    anchor_on_scale, i, j, 1:5
+                ] = torch.tensor(
+                    [x_cell, y_cell, w_cell, h_cell],
+                    dtype=torch.float32
+                )
 
-                    targets[scale_idx][
-                        anchor_on_scale, i, j, 1:5
-                    ] = torch.tensor(
-                        [x_cell, y_cell, w_cell, h_cell],
-                        dtype=torch.float32
-                    )
+                targets[scale_idx][
+                    anchor_on_scale, i, j, 5
+                ] = class_id
 
-                    targets[scale_idx][
-                        anchor_on_scale, i, j, 5
-                    ] = class_id
+                positive_slots.add(slot)
+                assigned = True
+                break
+        
+        # Pass 2: mark high-IoU non-positive anchors as ignore/free.
+        for box in boxes_yolo:
+            class_id, x, y, w, h = box
 
-                    has_anchor[scale_idx] = True
+            if w <= 0 or h <= 0:
+                continue
 
-                elif (
-                    anchor_taken == 0
-                    and iou_anchors[anchor_idx] > self.ignore_iou_thresh
-                ):
-                    targets[scale_idx][
-                        anchor_on_scale, i, j, 0
-                    ] = -1.0
+            box_wh = torch.tensor([w, h], dtype=torch.float32)
+
+            iou_anchors = iou_width_height(
+                box_wh=box_wh,
+                anchors_wh=self.all_anchors,
+            )
+
+            for anchor_idx in range(len(self.all_anchors)):
+                if iou_anchors[anchor_idx] <= self.ignore_iou_thresh:
+                    continue
+
+                scale_idx = anchor_idx // 3
+                anchor_on_scale = anchor_idx % 3
+
+                S = self.scales[scale_idx]
+
+                i = int(S * y)
+                j = int(S * x)
+
+                i = min(S - 1, max(0, i))
+                j = min(S - 1, max(0, j))
+
+                current_obj = targets[scale_idx][anchor_on_scale, i, j, 0]
+
+                if current_obj == 0:
+                    targets[scale_idx][anchor_on_scale, i, j, 0] = -1.0
 
         return tuple(targets)
     
