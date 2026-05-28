@@ -119,7 +119,8 @@ def main():
     )
 
     metrics = compute_metrics(
-        val_json_path=config["data"]["val_json"],
+        # val_json_path=config["data"]["val_json"],
+        val_json_path=config["data"]["train_json"],
         predictions_json=predictions_json,
         iou_threshold=args.eval_iou_thresh,
     )

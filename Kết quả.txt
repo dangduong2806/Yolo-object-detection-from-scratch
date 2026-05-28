@@ -1,0 +1,66 @@
+# Thống kê lại kết quả chút thui
+
+conf-thresh: 0.25
+===== Overall =====
+mAP@0.5        : 0.163510
+micro precision: 0.055688
+micro recall   : 0.590302
+GT boxes       : 2021
+Pred boxes     : 21423
+
+===== Per class =====
+class                    AP@0.5  precision     recall     GT   Pred     TP     FP
+chair                  0.024189   0.018300   0.368794    282   5683    104   5579
+car                    0.108992   0.032958   0.445230    283   3823    126   3697
+dog                    0.174782   0.079402   0.669903    206   1738    138   1600
+cat                    0.208231   0.066740   0.693182    176   1828    122   1706
+person                 0.301354   0.084182   0.654562   1074   8351    703   7648
+
+conf-thresh: 0.4
+===== Overall =====
+mAP@0.5        : 0.160967
+micro precision: 0.074452
+micro recall   : 0.551707
+GT boxes       : 2021
+Pred boxes     : 14976
+
+===== Per class =====
+class                    AP@0.5  precision     recall     GT   Pred     TP     FP
+chair                  0.023070   0.023989   0.315603    282   3710     89   3621
+car                    0.106862   0.042802   0.388693    283   2570    110   2460
+dog                    0.171690   0.103968   0.635922    206   1260    131   1129
+cat                    0.204696   0.101604   0.647727    176   1122    114   1008
+person                 0.298519   0.106272   0.624767   1074   6314    671   5643
+
+conf-thresh: 0.5
+===== Overall =====
+mAP@0.5        : 0.157211
+micro precision: 0.088341
+micro recall   : 0.521524
+GT boxes       : 2021
+Pred boxes     : 11931
+
+===== Per class =====
+class                    AP@0.5  precision     recall     GT   Pred     TP     FP
+chair                  0.022294   0.028887   0.287234    282   2804     81   2723
+car                    0.105447   0.050728   0.356890    283   1991    101   1890
+dog                    0.162909   0.123789   0.558252    206    929    115    814
+cat                    0.199027   0.133838   0.602273    176    792    106    686
+person                 0.296379   0.120222   0.606145   1074   5415    651   4764
+
+conf-thresh: 0.7
+===== Overall =====
+mAP@0.5        : 0.139549
+micro precision: 0.126461
+micro recall   : 0.444334
+GT boxes       : 2021
+Pred boxes     : 7101
+
+===== Per class =====
+class                    AP@0.5  precision     recall     GT   Pred     TP     FP
+chair                  0.019830   0.043110   0.216312    282   1415     61   1354
+car                    0.102603   0.079111   0.314488    283   1125     89   1036
+dog                    0.135969   0.189448   0.383495    206    417     79    338
+cat                    0.148496   0.232558   0.340909    176    258     60    198
+person                 0.290846   0.156716   0.567039   1074   3886    609   3277
+
