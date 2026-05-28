@@ -213,7 +213,8 @@ def build_val_predictions(
 ):
     model.eval()
     root_dir = config["data"]["root_dir"]
-    val_json = config["data"]["val_json"]
+    # val_json = config["data"]["val_json"]
+    val_json = config["data"]["train_json"]
     image_size = config["data"]["image_size"]
     anchors = config["anchors"]
 
