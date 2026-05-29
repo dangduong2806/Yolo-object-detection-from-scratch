@@ -32,7 +32,7 @@ train:
   mixed_precision: True
   gradient_clip_norm: 10.0
   seed: 42
-  map_eval_interval: 1 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
+  map_eval_interval: 5 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
 
 loss:
   lambda_box: 10.0
