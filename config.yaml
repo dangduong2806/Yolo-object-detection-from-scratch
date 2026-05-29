@@ -23,19 +23,19 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 80
+  epochs: 100
   batch_size: 16
   num_workers: 0 # chạy trên kaggle
   learning_rate: 0.0001
-  weight_decay: 0.0005
+  weight_decay: 0.001
   device: "cuda"
   mixed_precision: True
   gradient_clip_norm: 10.0
   seed: 42
-  map_eval_interval: 5
+  map_eval_interval: 1 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
 
 loss:
   lambda_box: 10.0
   lambda_obj: 1.0
-  lambda_noobj: 1.0
+  lambda_noobj: 2.0
   lambda_class: 1.0
