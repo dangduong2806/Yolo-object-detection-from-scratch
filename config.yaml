@@ -1,8 +1,8 @@
 project:
   save_dir: "checkpoints"
-  best_loss_model_name: "best_loss_yolov3.pth"
-  last_model_name: "last_yolov3.pth"
-  best_map_model_name: "best_map_yolov3.pth"
+  best_loss_model_name: "best_loss_yolov3_v2.pth"
+  last_model_name: "last_yolov3_v2.pth"
+  best_map_model_name: "best_map_yolov3_v2.pth"
 
 data:
   root_dir: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public"
