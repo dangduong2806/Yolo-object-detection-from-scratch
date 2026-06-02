@@ -23,11 +23,13 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 100
+  epochs: 120
   batch_size: 16
   num_workers: 0 # chạy trên kaggle
+  scheduler: "cosine"
   learning_rate: 0.0001
-  weight_decay: 0.001
+  min_learning_rate: 0.000001
+  weight_decay: 0.0005
   device: "cuda"
   mixed_precision: True
   gradient_clip_norm: 10.0
@@ -37,5 +39,19 @@ train:
 loss:
   lambda_box: 10.0
   lambda_obj: 1.0
-  lambda_noobj: 2.0
+  lambda_noobj: 1.0
   lambda_class: 1.0
+
+# Ngày 02/06
+# Bổ sung thêm augment
+augment:
+  enabled: True
+  hflip_prob: 0.5
+  color_prob: 0.8
+  brightness: 0.2
+  contrast: 0.2
+  saturation: 0.2
+  scale_translate_prob: 0.5
+  scale_min: 0.8
+  scale_max: 1.2
+  translate: 0.10

@@ -14,6 +14,8 @@ from model import YOLOv3
 from loss import YOLOv3Loss
 from dataset import YOLODataset
 
+from augmentations import DetectionAugmenter
+
 from inference import (
     letterbox_image,
     image_to_tensor,
@@ -410,6 +412,14 @@ def main():
         print("CUDA không khả dụng, chuyển sang CPU.")
     else:
         device = torch.device(requested_device)
+
+    # Khởi tạo augmentation
+    augment_config = config.get("augment", {})
+    train_augmenter = (
+        DetectionAugmenter(augment_config)
+        if augment_config.get("enabled", False)
+        else None
+    )
     
     save_dir = config["project"]["save_dir"]
     os.makedirs(save_dir, exist_ok=True)
@@ -448,7 +458,8 @@ def main():
         image_size=image_size,
         scales=scales,
         ignore_iou_thresh=config["data"]["ignore_iou_thresh"],
-        use_letterbox=config["data"]["use_letterbox"]
+        use_letterbox=config["data"]["use_letterbox"],
+        augmenter=train_augmenter
     )
 
     val_dataset = YOLODataset(
@@ -459,6 +470,7 @@ def main():
         scales=scales,
         ignore_iou_thresh=config["data"]["ignore_iou_thresh"],
         use_letterbox=config["data"]["use_letterbox"],
+        augmenter=None,
     )
 
     train_loader = DataLoader(
@@ -497,6 +509,17 @@ def main():
         lr=config["train"]["learning_rate"],
         weight_decay=config["train"]["weight_decay"],
     )
+
+    scheduler_name = config["train"].get("scheduler", None)
+
+    if scheduler_name == "cosine":
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=config["train"]["epochs"],
+            eta_min=config["train"].get("min_learning_rate", 1e-6),
+        )
+    else:
+        scheduler = None
 
     use_amp = (
         config["train"]["mixed_precision"]
@@ -658,6 +681,12 @@ def main():
                     map50=best_map50,
                     config=config,
                 )
+        
+        if scheduler is not None:
+            scheduler.step()
+
+        current_lr = optimizer.param_groups[0]["lr"]
+        print(f"LR: {current_lr:.8f}")
 
     print("\nTraining completed.")
     print(f"Best val loss: {best_val_loss:.4f}")

@@ -42,7 +42,8 @@ class YOLODataset(Dataset):
             image_size=416,
             scales=(13,26,52),
             ignore_iou_thresh=0.5,
-            use_letterbox=True
+            use_letterbox=True,
+            augmenter=None,
     ):
         """
         json_path:
@@ -86,6 +87,7 @@ class YOLODataset(Dataset):
         self.scales = scales
         self.ignore_iou_thresh = ignore_iou_thresh
         self.use_letterbox = use_letterbox
+        self.augmenter = augmenter
 
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -409,6 +411,9 @@ class YOLODataset(Dataset):
             boxes_xyxy_cls.append(
                 [x1, y1, x2, y2, class_id]
             )
+
+        if self.augmenter is not None:
+            image, boxes_xyxy_cls = self.augmenter(image, boxes_xyxy_cls)
 
         if self.use_letterbox:
             image, boxes_yolo = self._letterbox(
