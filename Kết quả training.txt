@@ -1,0 +1,474 @@
+Epoch [1/120]
+Train loss: 8.2609 | Val loss: 6.1375 | mAP@0.5: 0.0037 | precision: 0.0029 | recall: 0.2128
+Train details: box=0.3666, obj=1.4093, noobj=1.7969, class=1.3883
+Val details: box=0.2301, obj=1.0308, noobj=1.7325, class=1.0729
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=6.1375
+LR: 0.00009998
+
+Epoch [2/120]
+Train loss: 5.7194 | Val loss: 5.3620 | mAP@0.5: skipped                        
+Train details: box=0.2390, obj=1.0532, noobj=1.2771, class=0.9992
+Val details: box=0.2143, obj=0.7733, noobj=1.4589, class=0.9863
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=5.3620
+LR: 0.00009993
+
+Epoch [3/120]
+Train loss: 5.3476 | Val loss: 4.8529 | mAP@0.5: skipped                        
+Train details: box=0.2397, obj=0.8921, noobj=1.0920, class=0.9662
+Val details: box=0.2021, obj=0.9321, noobj=0.9327, class=0.9674
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=4.8529
+LR: 0.00009985
+
+Epoch [4/120]
+Train loss: 4.7421 | Val loss: 4.8012 | mAP@0.5: skipped                        
+Train details: box=0.2046, obj=0.7994, noobj=0.9681, class=0.9286
+Val details: box=0.2030, obj=0.6476, noobj=1.1647, class=0.9584
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=4.8012
+LR: 0.00009973
+
+Epoch [5/120]
+Train loss: 4.6060 | Val loss: 4.4150 | mAP@0.5: 0.0158 | precision: 0.0039 | recall: 0.2890
+Train details: box=0.2053, obj=0.7422, noobj=0.8942, class=0.9161
+Val details: box=0.1911, obj=0.7943, noobj=0.7881, class=0.9218
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=4.4150
+LR: 0.00009958
+
+Epoch [6/120]
+Train loss: 4.5188 | Val loss: 4.1566 | mAP@0.5: skipped                        
+Train details: box=0.2085, obj=0.7119, noobj=0.8290, class=0.8931
+Val details: box=0.1779, obj=0.6188, noobj=0.8402, class=0.9188
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=4.1566
+LR: 0.00009939
+
+Epoch [7/120]
+Train loss: 4.2110 | Val loss: 3.9845 | mAP@0.5: skipped                        
+Train details: box=0.1934, obj=0.6125, noobj=0.7692, class=0.8957
+Val details: box=0.1743, obj=0.4931, noobj=0.8414, class=0.9074
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.9845
+LR: 0.00009917
+
+Epoch [8/120]
+Train loss: 4.1060 | Val loss: 4.0985 | mAP@0.5: skipped                        
+Train details: box=0.1878, obj=0.6432, noobj=0.7131, class=0.8717
+Val details: box=0.1746, obj=0.4364, noobj=1.0257, class=0.8903
+LR: 0.00009892
+
+Epoch [9/120]
+Train loss: 3.9520 | Val loss: 3.8512 | mAP@0.5: skipped                        
+Train details: box=0.1802, obj=0.5982, noobj=0.6906, class=0.8616
+Val details: box=0.1691, obj=0.5904, noobj=0.6792, class=0.8907
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.8512
+LR: 0.00009863
+
+Epoch [10/120]
+Train loss: 3.9301 | Val loss: 3.8599 | mAP@0.5: 0.0462 | precision: 0.0070 | recall: 0.4621
+Train details: box=0.1822, obj=0.5821, noobj=0.6677, class=0.8581
+Val details: box=0.1659, obj=0.8388, noobj=0.4913, class=0.8709
+LR: 0.00009831
+
+Epoch [11/120]
+Train loss: 3.7117 | Val loss: 3.7064 | mAP@0.5: skipped                        
+Train details: box=0.1715, obj=0.5534, noobj=0.6298, class=0.8135
+Val details: box=0.1621, obj=0.5022, noobj=0.7400, class=0.8427
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.7064
+LR: 0.00009796
+
+Epoch [12/120]
+Train loss: 3.6130 | Val loss: 3.6872 | mAP@0.5: skipped                        
+Train details: box=0.1662, obj=0.5297, noobj=0.6086, class=0.8126
+Val details: box=0.1703, obj=0.4645, noobj=0.7023, class=0.8174
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.6872
+LR: 0.00009758
+
+Epoch [13/120]
+Train loss: 3.6419 | Val loss: 3.6905 | mAP@0.5: skipped                        
+Train details: box=0.1723, obj=0.5355, noobj=0.5964, class=0.7865
+Val details: box=0.1617, obj=0.4952, noobj=0.7473, class=0.8313
+LR: 0.00009716
+
+Epoch [14/120]
+Train loss: 3.6013 | Val loss: 3.5813 | mAP@0.5: skipped                        
+Train details: box=0.1709, obj=0.5294, noobj=0.5903, class=0.7727
+Val details: box=0.1562, obj=0.7388, noobj=0.4737, class=0.8068
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.5813
+LR: 0.00009671
+
+Epoch [15/120]
+Train loss: 3.3865 | Val loss: 3.3926 | mAP@0.5: 0.0530 | precision: 0.0088 | recall: 0.5789
+Train details: box=0.1602, obj=0.4914, noobj=0.5540, class=0.7386
+Val details: box=0.1524, obj=0.5763, noobj=0.5232, class=0.7694
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.3926
+LR: 0.00009623
+
+Epoch [16/120]
+Train loss: 3.4462 | Val loss: 3.7268 | mAP@0.5: skipped                        
+Train details: box=0.1651, obj=0.5108, noobj=0.5366, class=0.7479
+Val details: box=0.1617, obj=0.4776, noobj=0.8294, class=0.8030
+LR: 0.00009572
+
+Epoch [17/120]
+Train loss: 3.4548 | Val loss: 3.6028 | mAP@0.5: skipped                        
+Train details: box=0.1688, obj=0.4763, noobj=0.5364, class=0.7543
+Val details: box=0.1657, obj=0.6228, noobj=0.5511, class=0.7719
+LR: 0.00009518
+
+Epoch [18/120]
+Train loss: 3.2960 | Val loss: 3.3563 | mAP@0.5: skipped                        
+Train details: box=0.1585, obj=0.4748, noobj=0.5227, class=0.7137
+Val details: box=0.1528, obj=0.5034, noobj=0.5820, class=0.7433
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.3563
+LR: 0.00009460
+
+Epoch [19/120]
+Train loss: 3.1393 | Val loss: 3.6209 | mAP@0.5: skipped                        
+Train details: box=0.1486, obj=0.4503, noobj=0.5091, class=0.6941
+Val details: box=0.1532, obj=0.8424, noobj=0.4858, class=0.7608
+LR: 0.00009400
+
+Epoch [20/120]
+Train loss: 3.1085 | Val loss: 3.2055 | mAP@0.5: 0.0988 | precision: 0.0102 | recall: 0.6467
+Train details: box=0.1521, obj=0.4287, noobj=0.4943, class=0.6647
+Val details: box=0.1482, obj=0.5232, noobj=0.4840, class=0.7163
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.2055
+LR: 0.00009337
+
+Epoch [21/120]
+Train loss: 3.0895 | Val loss: 3.2472 | mAP@0.5: skipped                        
+Train details: box=0.1508, obj=0.4368, noobj=0.4901, class=0.6543
+Val details: box=0.1520, obj=0.4316, noobj=0.6077, class=0.6882
+LR: 0.00009271
+
+Epoch [22/120]
+Train loss: 3.1868 | Val loss: 3.2199 | mAP@0.5: skipped                        
+Train details: box=0.1593, obj=0.4530, noobj=0.4798, class=0.6607
+Val details: box=0.1466, obj=0.5299, noobj=0.5220, class=0.7020
+LR: 0.00009201
+
+Epoch [23/120]
+Train loss: 3.0524 | Val loss: 3.1071 | mAP@0.5: skipped                        
+Train details: box=0.1524, obj=0.4148, noobj=0.4786, class=0.6351
+Val details: box=0.1448, obj=0.4999, noobj=0.4871, class=0.6724
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.1071
+LR: 0.00009129
+
+Epoch [24/120]
+Train loss: 2.9039 | Val loss: 3.1984 | mAP@0.5: skipped                        
+Train details: box=0.1430, obj=0.3894, noobj=0.4573, class=0.6271
+Val details: box=0.1512, obj=0.5307, noobj=0.5000, class=0.6554
+LR: 0.00009055
+
+Epoch [25/120]
+Train loss: 2.9139 | Val loss: 3.1047 | mAP@0.5: 0.0939 | precision: 0.0099 | recall: 0.6576
+Train details: box=0.1434, obj=0.4026, noobj=0.4543, class=0.6227
+Val details: box=0.1459, obj=0.4367, noobj=0.5450, class=0.6638
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.1047
+LR: 0.00008977
+
+Epoch [26/120]
+Train loss: 2.8458 | Val loss: 3.0841 | mAP@0.5: skipped                        
+Train details: box=0.1382, obj=0.4173, noobj=0.4529, class=0.5935
+Val details: box=0.1456, obj=0.4954, noobj=0.4793, class=0.6535
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=3.0841
+LR: 0.00008897
+
+Epoch [27/120]
+Train loss: 2.8370 | Val loss: 2.9267 | mAP@0.5: skipped                        
+Train details: box=0.1415, obj=0.3982, noobj=0.4375, class=0.5863
+Val details: box=0.1423, obj=0.3680, noobj=0.5268, class=0.6093
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=2.9267
+LR: 0.00008814
+
+Epoch [28/120]
+Train loss: 2.8209 | Val loss: 3.0151 | mAP@0.5: skipped                        
+Train details: box=0.1473, obj=0.3566, noobj=0.4299, class=0.5618
+Val details: box=0.1469, obj=0.3771, noobj=0.5386, class=0.6302
+LR: 0.00008729
+
+Epoch [29/120]
+Train loss: 2.8011 | Val loss: 2.9602 | mAP@0.5: skipped                        
+Train details: box=0.1401, obj=0.3883, noobj=0.4344, class=0.5774
+Val details: box=0.1437, obj=0.4165, noobj=0.4906, class=0.6160
+LR: 0.00008641
+
+Epoch [30/120]
+Train loss: 2.7284 | Val loss: 2.9747 | mAP@0.5: 0.1318 | precision: 0.0106 | recall: 0.6947
+Train details: box=0.1380, obj=0.3760, noobj=0.4229, class=0.5500
+Val details: box=0.1431, obj=0.4081, noobj=0.5235, class=0.6118
+LR: 0.00008550
+
+Epoch [31/120]
+Train loss: 2.6445 | Val loss: 2.8863 | mAP@0.5: skipped                        
+Train details: box=0.1346, obj=0.3436, noobj=0.4118, class=0.5435
+Val details: box=0.1387, obj=0.5225, noobj=0.3991, class=0.5778
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=2.8863
+LR: 0.00008457
+
+Epoch [32/120]
+Train loss: 2.6161 | Val loss: 3.0339 | mAP@0.5: skipped                        
+Train details: box=0.1317, obj=0.3659, noobj=0.4062, class=0.5273
+Val details: box=0.1377, obj=0.6039, noobj=0.3883, class=0.6642
+LR: 0.00008362
+
+Epoch [33/120]
+Train loss: 2.5753 | Val loss: 2.8124 | mAP@0.5: skipped                        
+Train details: box=0.1317, obj=0.3375, noobj=0.4026, class=0.5181
+Val details: box=0.1327, obj=0.5255, noobj=0.4129, class=0.5472
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=2.8124
+LR: 0.00008265
+
+Epoch [34/120]
+Train loss: 2.6183 | Val loss: 2.9609 | mAP@0.5: skipped                        
+Train details: box=0.1368, obj=0.3496, noobj=0.3904, class=0.5101
+Val details: box=0.1374, obj=0.6162, noobj=0.3854, class=0.5856
+LR: 0.00008165
+
+Epoch [35/120]
+Train loss: 2.4949 | Val loss: 2.8562 | mAP@0.5: 0.1283 | precision: 0.0114 | recall: 0.7363
+Train details: box=0.1255, obj=0.3379, noobj=0.3908, class=0.5115
+Val details: box=0.1347, obj=0.4286, noobj=0.4914, class=0.5896
+LR: 0.00008063
+
+Epoch [36/120]
+Train loss: 2.4328 | Val loss: 2.8503 | mAP@0.5: skipped                        
+Train details: box=0.1222, obj=0.3193, noobj=0.3854, class=0.5058
+Val details: box=0.1335, obj=0.6011, noobj=0.3632, class=0.5511
+LR: 0.00007960
+
+Epoch [37/120]
+Train loss: 2.4402 | Val loss: 2.7575 | mAP@0.5: skipped                        
+Train details: box=0.1253, obj=0.3226, noobj=0.3720, class=0.4929
+Val details: box=0.1326, obj=0.4851, noobj=0.3942, class=0.5519
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=2.7575
+LR: 0.00007854
+
+Epoch [38/120]
+Train loss: 2.3574 | Val loss: 2.7333 | mAP@0.5: skipped                        
+Train details: box=0.1221, obj=0.3133, noobj=0.3686, class=0.4549
+Val details: box=0.1320, obj=0.3639, noobj=0.5041, class=0.5457
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=2.7333
+LR: 0.00007746
+
+Epoch [39/120]
+Train loss: 2.3205 | Val loss: 3.0283 | mAP@0.5: skipped                        
+Train details: box=0.1216, obj=0.2855, noobj=0.3605, class=0.4583
+Val details: box=0.1354, obj=0.7878, noobj=0.2759, class=0.6110
+LR: 0.00007636
+
+Epoch [40/120]
+Train loss: 2.3610 | Val loss: 2.7735 | mAP@0.5: 0.1615 | precision: 0.0130 | recall: 0.7778
+Train details: box=0.1204, obj=0.3127, noobj=0.3634, class=0.4808
+Val details: box=0.1291, obj=0.5117, noobj=0.4201, class=0.5511
+LR: 0.00007525
+
+Epoch [41/120]
+Train loss: 2.2842 | Val loss: 2.7002 | mAP@0.5: skipped                        
+Train details: box=0.1207, obj=0.2854, noobj=0.3524, class=0.4391
+Val details: box=0.1253, obj=0.4978, noobj=0.4013, class=0.5485
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=2.7002
+LR: 0.00007412
+
+Epoch [42/120]
+Train loss: 2.2991 | Val loss: 2.9141 | mAP@0.5: skipped                        
+Train details: box=0.1211, obj=0.2991, noobj=0.3403, class=0.4491
+Val details: box=0.1289, obj=0.7680, noobj=0.2870, class=0.5704
+LR: 0.00007297
+
+Epoch [43/120]
+Train loss: 2.2821 | Val loss: 2.8821 | mAP@0.5: skipped                        
+Train details: box=0.1166, obj=0.3148, noobj=0.3481, class=0.4529
+Val details: box=0.1306, obj=0.3972, noobj=0.4945, class=0.6846
+LR: 0.00007181
+
+Epoch [44/120]
+Train loss: 2.1748 | Val loss: 2.6505 | mAP@0.5: skipped                        
+Train details: box=0.1136, obj=0.2777, noobj=0.3367, class=0.4244
+Val details: box=0.1302, obj=0.4845, noobj=0.3547, class=0.5093
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=2.6505
+LR: 0.00007063
+
+Epoch [45/120]
+Train loss: 2.1956 | Val loss: 2.7992 | mAP@0.5: 0.1896 | precision: 0.0141 | recall: 0.8036
+Train details: box=0.1123, obj=0.2898, noobj=0.3380, class=0.4445
+Val details: box=0.1292, obj=0.6523, noobj=0.3173, class=0.5376
+LR: 0.00006944
+
+Epoch [46/120]
+Train loss: 2.2235 | Val loss: 2.6812 | mAP@0.5: skipped                        
+Train details: box=0.1180, obj=0.2883, noobj=0.3310, class=0.4245
+Val details: box=0.1297, obj=0.5198, noobj=0.3325, class=0.5320
+LR: 0.00006824
+
+Epoch [47/120]
+Train loss: 2.1514 | Val loss: 2.8605 | mAP@0.5: skipped                        
+Train details: box=0.1144, obj=0.2843, noobj=0.3198, class=0.4035
+Val details: box=0.1336, obj=0.6820, noobj=0.3184, class=0.5245
+LR: 0.00006702
+
+Epoch [48/120]
+Train loss: 2.1124 | Val loss: 2.7815 | mAP@0.5: skipped                        
+Train details: box=0.1145, obj=0.2479, noobj=0.3168, class=0.4031
+Val details: box=0.1289, obj=0.6697, noobj=0.2986, class=0.5237
+LR: 0.00006580
+
+Epoch [49/120]
+Train loss: 2.0756 | Val loss: 2.6919 | mAP@0.5: skipped                        
+Train details: box=0.1128, obj=0.2517, noobj=0.3089, class=0.3872
+Val details: box=0.1289, obj=0.5684, noobj=0.3087, class=0.5257
+LR: 0.00006456
+
+Epoch [50/120]
+Train loss: 2.0300 | Val loss: 2.7266 | mAP@0.5: 0.1509 | precision: 0.0146 | recall: 0.8070
+Train details: box=0.1067, obj=0.2584, noobj=0.3111, class=0.3935
+Val details: box=0.1278, obj=0.6738, noobj=0.2805, class=0.4940
+LR: 0.00006331
+
+Epoch [51/120]
+Train loss: 2.0662 | Val loss: 2.8724 | mAP@0.5: skipped                        
+Train details: box=0.1105, obj=0.2682, noobj=0.3107, class=0.3826
+Val details: box=0.1392, obj=0.5920, noobj=0.3583, class=0.5298
+LR: 0.00006206
+
+Epoch [52/120]
+Train loss: 2.0265 | Val loss: 2.6844 | mAP@0.5: skipped                        
+Train details: box=0.1084, obj=0.2593, noobj=0.3008, class=0.3827
+Val details: box=0.1262, obj=0.5869, noobj=0.3436, class=0.4916
+LR: 0.00006079
+
+Epoch [53/120]
+Train loss: 2.0371 | Val loss: 2.5166 | mAP@0.5: skipped                        
+Train details: box=0.1121, obj=0.2530, noobj=0.2940, class=0.3696
+Val details: box=0.1247, obj=0.4773, noobj=0.3294, class=0.4630
+Saved best loss model: checkpoints/best_loss_yolov3_v2.pth with best val_loss=2.5166
+LR: 0.00005952
+
+Epoch [54/120]
+Train loss: 1.9198 | Val loss: 2.6066 | mAP@0.5: skipped                        
+Train details: box=0.1017, obj=0.2498, noobj=0.2909, class=0.3625
+Val details: box=0.1251, obj=0.5372, noobj=0.3485, class=0.4696
+LR: 0.00005824
+
+Epoch [55/120]
+Train loss: 1.9216 | Val loss: 2.6313 | mAP@0.5: 0.1975 | precision: 0.0152 | recall: 0.8075
+Train details: box=0.1052, obj=0.2291, noobj=0.2897, class=0.3506
+Val details: box=0.1214, obj=0.6700, noobj=0.2494, class=0.4980
+LR: 0.00005696
+
+Epoch [56/120]
+Train loss: 2.0033 | Val loss: 2.6742 | mAP@0.5: skipped                        
+Train details: box=0.1141, obj=0.2376, noobj=0.2814, class=0.3434
+Val details: box=0.1234, obj=0.6561, noobj=0.2996, class=0.4846
+LR: 0.00005567
+
+Epoch [57/120]
+Train loss: 1.9623 | Val loss: 2.6162 | mAP@0.5: skipped                        
+Train details: box=0.1069, obj=0.2452, noobj=0.2848, class=0.3637
+Val details: box=0.1258, obj=0.5770, noobj=0.3097, class=0.4712
+LR: 0.00005438
+
+Epoch [58/120]
+Train loss: 1.9036 | Val loss: 2.6703 | mAP@0.5: skipped                        
+Train details: box=0.1047, obj=0.2327, noobj=0.2803, class=0.3432
+Val details: box=0.1250, obj=0.5937, noobj=0.3469, class=0.4794
+LR: 0.00005309
+
+Epoch [59/120]
+Train loss: 1.8312 | Val loss: 2.7316 | mAP@0.5: skipped                        
+Train details: box=0.0982, obj=0.2290, noobj=0.2788, class=0.3418
+Val details: box=0.1246, obj=0.6919, noobj=0.2924, class=0.5014
+LR: 0.00005180
+
+Epoch [60/120]
+Train loss: 1.8178 | Val loss: 2.6350 | mAP@0.5: 0.1990 | precision: 0.0156 | recall: 0.8199
+Train details: box=0.0997, obj=0.2233, noobj=0.2772, class=0.3205
+Val details: box=0.1217, obj=0.6843, noobj=0.2628, class=0.4711
+LR: 0.00005050
+
+Epoch [61/120]
+Train loss: 1.8183 | Val loss: 2.6598 | mAP@0.5: skipped                        
+Train details: box=0.0989, obj=0.2500, noobj=0.2666, class=0.3128
+Val details: box=0.1236, obj=0.6777, noobj=0.2871, class=0.4587
+LR: 0.00004920
+
+Epoch [62/120]
+Train loss: 1.7756 | Val loss: 2.7529 | mAP@0.5: skipped                        
+Train details: box=0.0934, obj=0.2401, noobj=0.2641, class=0.3378
+Val details: box=0.1283, obj=0.7657, noobj=0.2541, class=0.4504
+LR: 0.00004791
+
+Epoch [63/120]
+Train loss: 1.7900 | Val loss: 2.5276 | mAP@0.5: skipped                        
+Train details: box=0.0993, obj=0.2324, noobj=0.2626, class=0.3018
+Val details: box=0.1214, obj=0.5842, noobj=0.2967, class=0.4326
+LR: 0.00004662
+
+Epoch [64/120]
+Train loss: 1.7331 | Val loss: 2.5218 | mAP@0.5: skipped                        
+Train details: box=0.0966, obj=0.2139, noobj=0.2572, class=0.2961
+Val details: box=0.1213, obj=0.5978, noobj=0.2785, class=0.4329
+LR: 0.00004533
+
+Epoch [65/120]
+Train loss: 1.7195 | Val loss: 2.7743 | mAP@0.5: 0.2235 | precision: 0.0162 | recall: 0.8179
+Train details: box=0.0979, obj=0.1985, noobj=0.2537, class=0.2887
+Val details: box=0.1224, obj=0.8731, noobj=0.2320, class=0.4454
+LR: 0.00004404
+
+Epoch [66/120]
+Train loss: 1.6898 | Val loss: 2.5691 | mAP@0.5: skipped                        
+Train details: box=0.0910, obj=0.2227, noobj=0.2530, class=0.3041
+Val details: box=0.1180, obj=0.6933, noobj=0.2646, class=0.4312
+LR: 0.00004276
+
+Epoch [67/120]
+Train loss: 1.6933 | Val loss: 2.6281 | mAP@0.5: skipped                        
+Train details: box=0.0934, obj=0.2148, noobj=0.2463, class=0.2983
+Val details: box=0.1199, obj=0.7364, noobj=0.2372, class=0.4557
+LR: 0.00004148
+
+Epoch [68/120]
+Train loss: 1.6497 | Val loss: 2.6129 | mAP@0.5: skipped                        
+Train details: box=0.0883, obj=0.2175, noobj=0.2434, class=0.3057
+Val details: box=0.1215, obj=0.6735, noobj=0.2636, class=0.4612
+LR: 0.00004021
+
+Epoch [69/120]
+Train loss: 1.6163 | Val loss: 2.6161 | mAP@0.5: skipped                        
+Train details: box=0.0890, obj=0.2015, noobj=0.2465, class=0.2786
+Val details: box=0.1177, obj=0.7777, noobj=0.2409, class=0.4210
+LR: 0.00003894
+
+Epoch [70/120]
+Train loss: 1.5889 | Val loss: 2.5969 | mAP@0.5: 0.2420 | precision: 0.0180 | recall: 0.8441
+Train details: box=0.0857, obj=0.2146, noobj=0.2433, class=0.2737
+Val details: box=0.1184, obj=0.7383, noobj=0.2548, class=0.4196
+LR: 0.00003769
+
+Epoch [71/120]
+Train loss: 1.5712 | Val loss: 2.5439 | mAP@0.5: skipped                        
+Train details: box=0.0867, obj=0.2015, noobj=0.2312, class=0.2710
+Val details: box=0.1201, obj=0.6542, noobj=0.2646, class=0.4238
+LR: 0.00003644
+
+Epoch [72/120]
+Train loss: 1.5645 | Val loss: 2.5610 | mAP@0.5: skipped                        
+Train details: box=0.0884, obj=0.1867, noobj=0.2339, class=0.2603
+Val details: box=0.1167, obj=0.7312, noobj=0.2359, class=0.4269
+LR: 0.00003520
+
+Epoch [73/120]
+Train loss: 1.4767 | Val loss: 2.6880 | mAP@0.5: skipped                        
+Train details: box=0.0825, obj=0.1682, noobj=0.2282, class=0.2554
+Val details: box=0.1210, obj=0.8251, noobj=0.2182, class=0.4351
+LR: 0.00003398
+
+Epoch [74/120]
+Train loss: 1.5206 | Val loss: 2.6029 | mAP@0.5: skipped                        
+Train details: box=0.0840, obj=0.1907, noobj=0.2240, class=0.2662
+Val details: box=0.1173, obj=0.8098, noobj=0.2138, class=0.4060
+LR: 0.00003276
+
+Epoch [75/120]
+Train loss: 1.4701 | Val loss: 2.7012 | mAP@0.5: 0.2614 | precision: 0.0186 | recall: 0.8377
+Train details: box=0.0821, obj=0.1940, noobj=0.2177, class=0.2371
+Val details: box=0.1216, obj=0.8259, noobj=0.2248, class=0.4341
+LR: 0.00003156
