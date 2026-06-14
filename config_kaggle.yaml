@@ -47,9 +47,10 @@ train:
   map_conf_thresh: 0.4
   map_nms_iou_thresh: 0.5
 
-  load_optimizer_state: false
+  load_optimizer_state: true
 
-  resume_checkpoint: "checkpoints/best_map_yolov3_resnet50_v0.pth"
+  # resume_checkpoint: "checkpoints/best_map_yolov3_resnet50_v0.pth"
+  resume_checkpoint: "checkpoints/last_yolov3_resnet50_phase2.pth"
 
 loss:
   lambda_box: 5.0
