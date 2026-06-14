@@ -28,10 +28,10 @@ anchors:
 
 train:
   epochs: 5
-  batch_size: 16
+  batch_size: 8 # Giảm khi dùng pretrained
   num_workers: 0 # chạy trên kaggle
   scheduler: null
-  learning_rate: 0.0001
+  learning_rate: 0.00005
   min_learning_rate: 0.000001
   weight_decay: 0.0005
   device: "cuda"
@@ -71,3 +71,9 @@ early_stopping:
   patience: 3
   min_delta: 0.001
   start_epoch: 30
+
+model:
+  name: "resnet50_yolov3"
+  pretrained: true
+  freeze_backbone: false
+  imagenet_normalize: true

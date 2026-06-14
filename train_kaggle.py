@@ -11,12 +11,13 @@ from PIL import Image
 from pathlib import Path
 
 from model import YOLOv3
+from model_resnet_yolov3 import ResNet50YOLOv3
 from loss import YOLOv3Loss
-from dataset import YOLODataset
+from dataset_kaggle import YOLODataset
 
 from augmentations import DetectionAugmenter
 
-from inference import (
+from inference_kaggle import (
     letterbox_image,
     image_to_tensor,
     prepare_anchors,
@@ -247,7 +248,11 @@ def build_val_predictions(
             image_size=image_size,
         )
 
-        image_tensor = image_to_tensor(letterboxed_image).to(device)
+        # image_tensor = image_to_tensor(letterboxed_image).to(device)
+        image_tensor = image_to_tensor(
+            letterboxed_image,
+            imagenet_normalize=config.get("model", {}).get("imagenet_normalize", False),
+        ).to(device)
 
         outputs = model(image_tensor)
 
@@ -457,6 +462,8 @@ def main():
         device=device
     )
 
+    imagenet_normalize=config.get("model", {}).get("imagenet_normalize", False)
+
     train_dataset = YOLODataset(
         json_path=config["data"]["train_json"],
         root_dir=config["data"]["root_dir"],
@@ -465,7 +472,8 @@ def main():
         scales=scales,
         ignore_iou_thresh=config["data"]["ignore_iou_thresh"],
         use_letterbox=config["data"]["use_letterbox"],
-        augmenter=train_augmenter
+        augmenter=train_augmenter,
+        imagenet_normalize=imagenet_normalize,
     )
 
     val_dataset = YOLODataset(
@@ -477,6 +485,7 @@ def main():
         ignore_iou_thresh=config["data"]["ignore_iou_thresh"],
         use_letterbox=config["data"]["use_letterbox"],
         augmenter=None,
+        imagenet_normalize=imagenet_normalize
     )
 
     train_loader = DataLoader(
@@ -497,10 +506,25 @@ def main():
         drop_last=False,
     )
 
-    model = YOLOv3(
-        in_channels=3,
-        num_classes=num_classes
-    ).to(device=device)
+    # model = YOLOv3(
+    #     in_channels=3,
+    #     num_classes=num_classes
+    # ).to(device=device)
+
+    model_name = config.get("model", {}).get("name", "yolov3_from_scratch")
+
+    if model_name == "resnet50_yolov3":
+        model = ResNet50YOLOv3(
+            in_channels=3,
+            num_classes=num_classes,
+            pretrained=config.get("model", {}).get("pretrained", True),
+            freeze_backbone=config.get("model", {}).get("freeze_backbone", False),
+        ).to(device=device)
+    else:
+        model = YOLOv3(
+            in_channels=3,
+            num_classes=num_classes,
+        ).to(device=device)
 
     loss_fn = YOLOv3Loss(
         num_classes=num_classes,
