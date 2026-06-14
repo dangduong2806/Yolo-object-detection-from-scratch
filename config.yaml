@@ -1,8 +1,8 @@
 project:
   save_dir: "checkpoints"
-  best_loss_model_name: "best_loss_yolov3_v2.pth"
-  last_model_name: "last_yolov3_v2.pth"
-  best_map_model_name: "best_map_yolov3_v2.pth"
+  best_loss_model_name: "best_loss_mse_noobj2_fixedlr_90.pth"
+  last_model_name: "last_mse_noobj2_fixedlr_90.pth"
+  best_map_model_name: "best_map_mse_noobj2_fixedlr_90.pth"
 
 data:
   # root_dir: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public"
@@ -30,7 +30,7 @@ train:
   epochs: 90
   batch_size: 16
   num_workers: 0 # chạy trên kaggle
-  scheduler: "cosine"
+  scheduler: null
   learning_rate: 0.0001
   min_learning_rate: 0.000001
   weight_decay: 0.0005
@@ -39,7 +39,7 @@ train:
   gradient_clip_norm: 5.0
   seed: 42
   map_eval_interval: 10 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
-  resume_checkpoint: "checkpoints/last_yolov3_v2.pth"
+  resume_checkpoint: null
 
 loss:
   lambda_box: 10.0

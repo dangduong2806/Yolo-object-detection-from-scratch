@@ -30,7 +30,7 @@ train:
   epochs: 5
   batch_size: 16
   num_workers: 0 # chạy trên kaggle
-  scheduler: "cosine"
+  scheduler: null
   learning_rate: 0.0001
   min_learning_rate: 0.000001
   weight_decay: 0.0005
@@ -39,7 +39,7 @@ train:
   gradient_clip_norm: 5.0
   seed: 42
   map_eval_interval: 10 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
-  resume_checkpoint: "checkpoints/last_yolov3_v2.pth"
+  resume_checkpoint: null
 
 loss:
   lambda_box: 5.0
