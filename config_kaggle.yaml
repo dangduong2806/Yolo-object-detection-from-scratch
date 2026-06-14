@@ -27,7 +27,7 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 90
+  epochs: 5
   batch_size: 16
   num_workers: 0 # chạy trên kaggle
   scheduler: "cosine"
@@ -42,12 +42,12 @@ train:
   resume_checkpoint: "checkpoints/last_yolov3_v2.pth"
 
 loss:
-  lambda_box: 10.0
+  lambda_box: 5.0
   lambda_obj: 1.0
   lambda_noobj: 2.0
   lambda_class: 1.0
 
-  box_loss_type: "mse"
+  box_loss_type: "ciou"
   obj_label_smoothing: 0.0
   class_label_smoothing: 0.0
 
