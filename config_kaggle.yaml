@@ -1,8 +1,8 @@
 project:
   save_dir: "checkpoints"
-  best_loss_model_name: "best_loss_yolov3_resnet50_v0.pth"
-  last_model_name: "last_yolov3_resnet50_v0.pth"
-  best_map_model_name: "best_map_yolov3_resnet50_v0.pth"
+  best_loss_model_name: "best_loss_yolov3_resnet50_phase2.pth"
+  last_model_name: "last_yolov3_resnet50_phase2.pth"
+  best_map_model_name: "best_map_yolov3_resnet50_phase2.pth"
 
 data:
   root_dir: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public"
@@ -27,19 +27,29 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 5 # train phase 1
+  epochs: 85 # train phase 2
+  phase_epochs: 80
+
   batch_size: 8 # Giảm khi dùng pretrained
   num_workers: 0 # chạy trên kaggle
-  scheduler: null
-  learning_rate: 0.0001
+  scheduler: "cosine"
+  learning_rate: 0.00005
   min_learning_rate: 0.000001
+  lr_t_max: 80
+
   weight_decay: 0.0005
   device: "cuda"
   mixed_precision: True
   gradient_clip_norm: 5.0
   seed: 42
   map_eval_interval: 5 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
-  resume_checkpoint: null
+  map_eval_start_epoch: 10
+  map_conf_thresh: 0.4
+  map_nms_iou_thresh: 0.5
+
+  load_optimizer_state: false
+
+  resume_checkpoint: "checkpoints/best_map_yolov3_resnet50_v0.pth"
 
 loss:
   lambda_box: 5.0
@@ -75,5 +85,5 @@ early_stopping:
 model:
   name: "resnet50_yolov3"
   pretrained: true
-  freeze_backbone: true # train phase 1
+  freeze_backbone: false # train phase 2
   imagenet_normalize: true
