@@ -502,6 +502,9 @@ def main():
         lambda_obj=config["loss"]["lambda_obj"],
         lambda_noobj=config["loss"]["lambda_noobj"],
         lambda_class=config["loss"]["lambda_class"],
+        box_loss_type=config["loss"].get("box_loss_type", "mse"),
+        obj_label_smoothing=config["loss"].get("obj_label_smoothing", 0.0),
+        class_label_smoothing=config["loss"].get("class_label_smoothing", 0.0),
     )
 
     optimizer = torch.optim.Adam(

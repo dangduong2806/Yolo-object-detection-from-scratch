@@ -9,8 +9,6 @@ from tqdm import tqdm
 #CUDA
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda" if use_cuda else "cpu")
-seed = 17
-torch.manual_seed(17)
 print(device)
 
 class CNNBlock(nn.Module):
@@ -280,6 +278,9 @@ class YOLOv3(nn.Module):
         return outputs
 
 if __name__ == "__main__":
+    seed = 17
+    torch.manual_seed(17)
+
     num_classes = 5
     image_size = 416
 

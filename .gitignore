@@ -1,0 +1,52 @@
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter/runtime artifacts
+.ipynb_checkpoints/
+
+# Model checkpoints and training outputs
+checkpoints/
+outputs/
+runs/
+wandb/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+
+# Local datasets / extracted data
+final_public/
+data/
+datasets/
+*.zip
+
+# Logs and local result notes
+*.log
+Kết quả*.txt
+Kết_quả*.txt
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*

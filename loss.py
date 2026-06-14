@@ -2,6 +2,69 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+def xywh_to_xyxy(box):
+    x, y, w, h = box.unbind(dim=-1)
+
+    return torch.stack(
+        [
+            x - w / 2,
+            y - h / 2,
+            x + w / 2,
+            y + h / 2,
+        ],
+        dim=-1,
+    )
+
+
+def bbox_ciou(box1, box2, eps=1e-7):
+    b1_x1, b1_y1, b1_x2, b1_y2 = box1.unbind(dim=-1)
+    b2_x1, b2_y1, b2_x2, b2_y2 = box2.unbind(dim=-1)
+
+    inter_x1 = torch.max(b1_x1, b2_x1)
+    inter_y1 = torch.max(b1_y1, b2_y1)
+    inter_x2 = torch.min(b1_x2, b2_x2)
+    inter_y2 = torch.min(b1_y2, b2_y2)
+
+    inter_w = (inter_x2 - inter_x1).clamp(min=0)
+    inter_h = (inter_y2 - inter_y1).clamp(min=0)
+    inter_area = inter_w * inter_h
+
+    area1 = (b1_x2 - b1_x1).clamp(min=0) * (b1_y2 - b1_y1).clamp(min=0)
+    area2 = (b2_x2 - b2_x1).clamp(min=0) * (b2_y2 - b2_y1).clamp(min=0)
+
+    union = area1 + area2 - inter_area + eps
+    iou = inter_area / union
+
+    b1_cx = (b1_x1 + b1_x2) / 2
+    b1_cy = (b1_y1 + b1_y2) / 2
+    b2_cx = (b2_x1 + b2_x2) / 2
+    b2_cy = (b2_y1 + b2_y2) / 2
+
+    center_dist = (b1_cx - b2_cx) ** 2 + (b1_cy - b2_cy) ** 2
+
+    enc_x1 = torch.min(b1_x1, b2_x1)
+    enc_y1 = torch.min(b1_y1, b2_y1)
+    enc_x2 = torch.max(b1_x2, b2_x2)
+    enc_y2 = torch.max(b1_y2, b2_y2)
+
+    enc_diag = (enc_x2 - enc_x1) ** 2 + (enc_y2 - enc_y1) ** 2 + eps
+
+    w1 = (b1_x2 - b1_x1).clamp(min=eps)
+    h1 = (b1_y2 - b1_y1).clamp(min=eps)
+    w2 = (b2_x2 - b2_x1).clamp(min=eps)
+    h2 = (b2_y2 - b2_y1).clamp(min=eps)
+
+    v = (4 / (torch.pi ** 2)) * (
+        torch.atan(w2 / h2) - torch.atan(w1 / h1)
+    ) ** 2
+
+    with torch.no_grad():
+        alpha = v / (1.0 - iou + v + eps)
+
+    ciou = iou - center_dist / enc_diag - alpha * v
+
+    return ciou
+
 class YOLOv3Loss(nn.Module):
     def __init__(
             self,
@@ -10,6 +73,9 @@ class YOLOv3Loss(nn.Module):
             lambda_obj = 1.0,
             lambda_noobj = 10.0,
             lambda_class=1.0,
+            box_loss_type="mse",
+            obj_label_smoothing=0.0,
+            class_label_smoothing=0.0,
             eps=1e-16,
     ):
         super().__init__()
@@ -20,6 +86,13 @@ class YOLOv3Loss(nn.Module):
         self.lambda_obj = lambda_obj
         self.lambda_noobj = lambda_noobj
         self.lambda_class = lambda_class
+
+        self.box_loss_type = box_loss_type
+        if self.box_loss_type not in ["mse", "ciou"]:
+            raise ValueError("box_loss_type must be 'mse' or 'ciou'")
+        
+        self.obj_label_smoothing = obj_label_smoothing
+        self.class_label_smoothing = class_label_smoothing
 
         self.eps = eps
 
@@ -98,7 +171,9 @@ class YOLOv3Loss(nn.Module):
         # 2. Objectness loss
         # Anchor có objec thì objectness target = 1
         obj_pred = predictions[..., 0][obj_mask]
-        obj_target = torch.ones_like(obj_pred)
+        # obj_target = torch.ones_like(obj_pred)
+        obj_target_value = 1.0 - self.obj_label_smoothing
+        obj_target = torch.full_like(obj_pred, obj_target_value)
 
         obj_loss = self._bce_with_logits(
             pred=obj_pred,
@@ -132,20 +207,74 @@ class YOLOv3Loss(nn.Module):
             target_wh / anchor_grid + self.eps
         )
 
-        pred_box_for_loss = torch.cat(
-            [pred_xy, pred_wh_raw],
-            dim=-1
-        )
+        # pred_box_for_loss = torch.cat(
+        #     [pred_xy, pred_wh_raw],
+        #     dim=-1
+        # )
 
-        target_box_for_loss = torch.cat(
-            [target_xy, target_wh_raw],
-            dim=-1
-        )
+        # target_box_for_loss = torch.cat(
+        #     [target_xy, target_wh_raw],
+        #     dim=-1
+        # )
 
-        box_loss = self._mse(
-            pred=pred_box_for_loss[obj_mask],
-            target=target_box_for_loss[obj_mask]
-        )
+        # box_loss = self._mse(
+        #     pred=pred_box_for_loss[obj_mask],
+        #     target=target_box_for_loss[obj_mask]
+        # )
+        if self.box_loss_type == "mse":
+            pred_box_for_loss = torch.cat(
+                [pred_xy, pred_wh_raw],
+                dim=-1
+            )
+
+            target_box_for_loss = torch.cat(
+                [target_xy, target_wh_raw],
+                dim=-1
+            )
+
+            box_loss = self._mse(
+                pred=pred_box_for_loss[obj_mask],
+                target=target_box_for_loss[obj_mask]
+            )
+
+        else:
+            pred_wh = torch.exp(pred_wh_raw.clamp(min=-10, max=10)) * anchor_grid
+
+            grid_y, grid_x = torch.meshgrid(
+                torch.arange(S, device=device),
+                torch.arange(S, device=device),
+                indexing="ij",
+            )
+
+            grid = torch.stack([grid_x, grid_y], dim=-1).float()
+            grid = grid.reshape(1, 1, S, S, 2)
+
+            pred_xy_grid = pred_xy + grid
+            target_xy_grid = target_xy + grid
+
+            pred_box_xywh = torch.cat(
+                [pred_xy_grid, pred_wh],
+                dim=-1,
+            )
+
+            target_box_xywh = torch.cat(
+                [target_xy_grid, target_wh],
+                dim=-1,
+            )
+
+            pred_box_xyxy = xywh_to_xyxy(pred_box_xywh)
+            target_box_xyxy = xywh_to_xyxy(target_box_xywh)
+
+            ciou = bbox_ciou(
+                pred_box_xyxy[obj_mask],
+                target_box_xyxy[obj_mask],
+                eps=self.eps,
+            )
+
+            if ciou.numel() == 0:
+                box_loss = predictions.sum() * 0.0
+            else:
+                box_loss = (1.0 - ciou).mean()
 
         # 4. Class loss
         # YOLOv3 dùng independent logistic classifiers,
@@ -161,6 +290,14 @@ class YOLOv3Loss(nn.Module):
                 target_class_ids,
                 num_classes=self.num_classes
             ).float()
+            
+            # added
+            if self.class_label_smoothing > 0:
+                smooth = self.class_label_smoothing
+                target_class_onehot = (
+                    target_class_onehot * (1.0 - smooth)
+                    + smooth / self.num_classes
+                )
 
             class_loss = self._bce_with_logits(
                 pred=pred_class_logits,
