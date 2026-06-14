@@ -27,29 +27,29 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 5
+  epochs: 5 # train phase 1
   batch_size: 8 # Giảm khi dùng pretrained
   num_workers: 0 # chạy trên kaggle
   scheduler: null
-  learning_rate: 0.00005
+  learning_rate: 0.0001
   min_learning_rate: 0.000001
   weight_decay: 0.0005
   device: "cuda"
   mixed_precision: True
   gradient_clip_norm: 5.0
   seed: 42
-  map_eval_interval: 10 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
+  map_eval_interval: 5 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
   resume_checkpoint: null
 
 loss:
   lambda_box: 5.0
   lambda_obj: 1.0
-  lambda_noobj: 2.0
+  lambda_noobj: 1.0
   lambda_class: 1.0
 
   box_loss_type: "ciou"
-  obj_label_smoothing: 0.0
-  class_label_smoothing: 0.0
+  obj_label_smoothing: 0.02
+  class_label_smoothing: 0.03
 
 # Ngày 02/06
 # Bổ sung thêm augment
@@ -75,5 +75,5 @@ early_stopping:
 model:
   name: "resnet50_yolov3"
   pretrained: true
-  freeze_backbone: false
+  freeze_backbone: true # train phase 1
   imagenet_normalize: true
