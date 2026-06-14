@@ -24,6 +24,7 @@ from inference import (
     decode_predictions,
     nms_classwise,
     map_box_to_original_image,
+    nms_classwise_torch
 )
 
 from tools.evaluate_predictions import (

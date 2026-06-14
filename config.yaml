@@ -1,8 +1,8 @@
 project:
   save_dir: "checkpoints"
-  best_loss_model_name: "best_loss_yolov3_v3.pth"
-  last_model_name: "last_yolov3_v3.pth"
-  best_map_model_name: "best_map_yolov3_v3.pth"
+  best_loss_model_name: "best_loss_yolov3_v2.pth"
+  last_model_name: "last_yolov3_v2.pth"
+  best_map_model_name: "best_map_yolov3_v2.pth"
 
 data:
   # root_dir: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public"
@@ -27,7 +27,7 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 120
+  epochs: 90
   batch_size: 16
   num_workers: 0 # chạy trên kaggle
   scheduler: "cosine"
@@ -36,20 +36,20 @@ train:
   weight_decay: 0.0005
   device: "cuda"
   mixed_precision: True
-  gradient_clip_norm: 2.0
+  gradient_clip_norm: 5.0
   seed: 42
   map_eval_interval: 10 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
   resume_checkpoint: "checkpoints/last_yolov3_v2.pth"
 
 loss:
-  lambda_box: 5.0
+  lambda_box: 10.0
   lambda_obj: 1.0
-  lambda_noobj: 1.0
+  lambda_noobj: 2.0
   lambda_class: 1.0
 
-  box_loss_type: "ciou"
-  obj_label_smoothing: 0.02
-  class_label_smoothing: 0.05
+  box_loss_type: "mse"
+  obj_label_smoothing: 0.0
+  class_label_smoothing: 0.0
 
 # Ngày 02/06
 # Bổ sung thêm augment
@@ -64,3 +64,10 @@ augment:
   scale_min: 0.8
   scale_max: 1.2
   translate: 0.10
+
+early_stopping:
+  enabled: True
+  monitor: "map50"
+  patience: 3
+  min_delta: 0.001
+  start_epoch: 30

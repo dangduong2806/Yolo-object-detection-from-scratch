@@ -7,6 +7,8 @@ import numpy as np
 import torch
 from PIL import Image, ImageDraw, ImageFont
 
+from torchvision.ops import nms
+
 from model import YOLOv3
 
 def load_config(config_path):
@@ -308,6 +310,58 @@ def nms_classwise(detections, iou_thresh):
 
     return final_detections
 
+def nms_classwise_torch(detections, iou_thresh, device=None):
+    """
+    Fast class-wise NMS using torchvision.ops.nms.
+    detections: list of dicts with:
+        class_id, score, box
+    box is [x1, y1, x2, y2], normalized or pixel both OK as long as consistent.
+    """
+    if len(detections) == 0:
+        return []
+
+    if device is None:
+        device = torch.device("cpu")
+
+    final_detections = []
+
+    class_ids = sorted(set(det["class_id"] for det in detections))
+
+    for class_id in class_ids:
+        class_dets = [
+            det for det in detections
+            if det["class_id"] == class_id
+        ]
+
+        boxes = torch.tensor(
+            [det["box"] for det in class_dets],
+            dtype=torch.float32,
+            device=device,
+        )
+
+        scores = torch.tensor(
+            [det["score"] for det in class_dets],
+            dtype=torch.float32,
+            device=device,
+        )
+
+        keep_indices = nms(
+            boxes=boxes,
+            scores=scores,
+            iou_threshold=iou_thresh,
+        )
+
+        for idx in keep_indices.cpu().tolist():
+            final_detections.append(class_dets[idx])
+
+    final_detections = sorted(
+        final_detections,
+        key=lambda x: x["score"],
+        reverse=True,
+    )
+
+    return final_detections
+
 
 def map_box_to_original_image(box, meta):
     """
@@ -474,9 +528,15 @@ def run_inference(
         conf_thresh=conf_thresh
     )
 
-    detections = nms_classwise(
+    # detections = nms_classwise(
+    #     detections=detections,
+    #     iou_thresh=iou_thresh
+    # )
+
+    detections = nms_classwise_torch(
         detections=detections,
-        iou_thresh=iou_thresh
+        iou_thresh=iou_thresh,
+        device=device,
     )
 
     for det in detections:

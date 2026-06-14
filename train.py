@@ -23,7 +23,8 @@ from inference import (
     decode_predictions,
     nms_classwise,
     map_box_to_original_image,
-    load_class_names
+    load_class_names,
+    nms_classwise_torch
 )
 
 from tools.evaluate_predictions import (
@@ -256,9 +257,14 @@ def build_val_predictions(
             conf_thresh=conf_thresh,
         )
 
-        detections = nms_classwise(
+        # detections = nms_classwise(
+        #     detections=detections,
+        #     iou_thresh=iou_thresh,
+        # )
+        detections = nms_classwise_torch(
             detections=detections,
             iou_thresh=iou_thresh,
+            device=device,
         )
 
         boxes = []
@@ -535,6 +541,14 @@ def main():
     best_map50 = 0.0
     best_val_loss_at_best_map = float("inf")
 
+    early_config = config.get("early_stopping", {})
+    early_enabled = early_config.get("enabled", False)
+    early_monitor = early_config.get("monitor", "map50")
+    early_patience = early_config.get("patience", 3)
+    early_min_delta = early_config.get("min_delta", 0.001)
+    early_start_epoch = early_config.get("start_epoch", 0)
+    early_bad_count = 0
+
     map_eval_interval = config["train"]["map_eval_interval"]
 
     epochs = config["train"]["epochs"]
@@ -568,8 +582,7 @@ def main():
         )
 
         should_eval_map = (
-            epoch == 1
-            or epoch % map_eval_interval == 0
+            epoch % map_eval_interval == 0
             or epoch == epochs
         )
 
@@ -662,6 +675,9 @@ def main():
         # best MAP checkpoint
         if should_eval_map:
             eps = 1e-4
+
+            previous_best_map50 = best_map50
+
             is_best_map = (
                 map50 > best_map50 + eps
                 or (
@@ -684,6 +700,29 @@ def main():
                     map50=best_map50,
                     config=config,
                 )
+            
+            if early_enabled and epoch >= early_start_epoch:
+                improved_for_early_stop = map50 > previous_best_map50 + early_min_delta
+
+                if improved_for_early_stop:
+                    early_bad_count = 0
+                else:
+                    early_bad_count += 1
+
+                print(
+                    f"Early stopping: bad_count={early_bad_count}/"
+                    f"{early_patience}, best_mAP@0.5={best_map50:.4f}"
+                )
+
+                if early_bad_count >= early_patience:
+                    print(
+                        f"Early stopping triggered at epoch {epoch}. "
+                        f"No mAP improvement > {early_min_delta} "
+                        f"for {early_patience} eval rounds."
+                    )
+                    break
+
+            
         
         if scheduler is not None:
             scheduler.step()
