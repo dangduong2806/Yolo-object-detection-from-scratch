@@ -1,8 +1,8 @@
 project:
   save_dir: "checkpoints"
-  best_loss_model_name: "best_loss_mse_noobj2_fixedlr_90.pth"
-  last_model_name: "last_mse_noobj2_fixedlr_90.pth"
-  best_map_model_name: "best_map_mse_noobj2_fixedlr_90.pth"
+  best_loss_model_name: "best_loss_resnet50_mse_mosaic_phaseB.pth"
+  last_model_name: "last_resnet50_mse_mosaic_phaseB.pth"
+  best_map_model_name: "best_map_resnet50_mse_mosaic_phaseB.pth"
 
 data:
   # root_dir: "/kaggle/input/datasets/du2o8n6gdangng/yolo-images/public"
@@ -12,9 +12,10 @@ data:
   train_json: "final_public/public/annotations/train.json"
   val_json: "final_public/public/annotations/val.json"
 
-  image_size: 416
+  image_size: 416 # phase 4B
   num_classes: 5
   scales: [13, 26, 52]
+  # scales: [16, 32, 64]
   use_letterbox: True
   ignore_iou_thresh: 0.5
 
@@ -27,47 +28,81 @@ anchors:
   - [[10, 13], [16, 30], [33, 23]]
 
 train:
-  epochs: 90
-  batch_size: 16
+  epochs: 35 # phase 4B
+  # phase_start_epoch: 36
+  phase_epochs: 20
+
+  batch_size: 8 # phase 4B
   num_workers: 0 # chạy trên kaggle
-  scheduler: null
-  learning_rate: 0.0001
+  scheduler: "cosine"
+  learning_rate: 0.00001
   min_learning_rate: 0.000001
+
   weight_decay: 0.0005
   device: "cuda"
   mixed_precision: True
   gradient_clip_norm: 5.0
   seed: 42
-  map_eval_interval: 10 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
-  resume_checkpoint: null
+  map_eval_interval: 5 # để lưu đúng best_map_yolov3.pth, tránh miss epoch tốt nhất.
+  map_eval_start_epoch: 20
+  
+  resume_checkpoint: "checkpoints/last_resnet50_mse_mosaic_phaseB.pth" # phase 4a
+  load_optimizer_state: true
+
+  map_conf_thresh: 0.3 # phase 4b
+  map_nms_iou_thresh: 0.4 # phase 4b
 
 loss:
   lambda_box: 10.0
   lambda_obj: 1.0
-  lambda_noobj: 2.0
+  lambda_noobj: 1.0
   lambda_class: 1.0
 
   box_loss_type: "mse"
   obj_label_smoothing: 0.0
   class_label_smoothing: 0.0
+  # cho phase 2
+  # obj_focal_gamma: 2.0
+  # obj_focal_alpha: 0.25
+  obj_focal_gamma: 0.0 # phase 4b
+  obj_focal_alpha: null # phase 4b
 
 # Ngày 02/06
 # Bổ sung thêm augment
 augment:
   enabled: True
+  mosaic_prob: 0.3
   hflip_prob: 0.5
-  color_prob: 0.8
-  brightness: 0.2
-  contrast: 0.2
-  saturation: 0.2
-  scale_translate_prob: 0.5
-  scale_min: 0.8
-  scale_max: 1.2
-  translate: 0.10
+  color_prob: 0.8 #phase 4b
+  brightness: 0.25
+  contrast: 0.25
+  saturation: 0.25
+  scale_translate_prob: 0.3
+  scale_min: 0.85
+  scale_max: 1.15
+  translate: 0.08
 
 early_stopping:
-  enabled: True
+  enabled: false # phase 3 chỉ chạy 10 epch -> tắt để model chạy đủ
   monitor: "map50"
-  patience: 3
+  patience: 4
   min_delta: 0.001
-  start_epoch: 30
+  start_epoch: 36
+
+model:
+  name: "resnet50_yolov3"
+  pretrained: true
+  freeze_backbone: false # phase 3
+  imagenet_normalize: true
+
+postprocess:
+  enabled: true
+
+  class_conf_thresholds:
+    cat: 0.30
+    dog: 0.35
+    person: 0.40
+    chair: 0.40
+    car: 0.45
+
+  max_detections_per_image: 50

@@ -1,0 +1,91 @@
+project:
+  save_dir: "models"
+  best_loss_model_name: "best_loss.pth"
+  last_model_name: "last.pth"
+  best_map_model_name: "best.pth"
+
+weights:
+  # The script also supports --weights-url and MODEL_WEIGHTS_URL.
+  url: "https://huggingface.co/duongduong9/yolo-resnet50-best/resolve/main/best.pth"
+
+data:
+  root_dir: "public"
+  train_json: "public/annotations/train.json"
+  val_json: "public/annotations/val.json"
+  classes: ["person", "car", "dog", "cat", "chair"]
+  image_size: 416
+  num_classes: 5
+  scales: [13, 26, 52]
+  use_letterbox: true
+  ignore_iou_thresh: 0.5
+
+anchors:
+  - [[116, 90], [156, 198], [373, 326]]
+  - [[30, 61], [62, 45], [59, 119]]
+  - [[10, 13], [16, 30], [33, 23]]
+
+train:
+  epochs: 20
+  batch_size: 8
+  num_workers: 0
+  scheduler: "cosine"
+  learning_rate: 0.00001
+  min_learning_rate: 0.000001
+  weight_decay: 0.0005
+  device: "cuda"
+  mixed_precision: true
+  gradient_clip_norm: 5.0
+  seed: 42
+  map_eval_interval: 5
+  map_eval_start_epoch: 5
+  resume_checkpoint: null
+  load_optimizer_state: false
+  map_conf_thresh: 0.30
+  map_nms_iou_thresh: 0.30
+
+loss:
+  lambda_box: 10.0
+  lambda_obj: 1.0
+  lambda_noobj: 1.0
+  lambda_class: 1.0
+  box_loss_type: "mse"
+  obj_label_smoothing: 0.0
+  class_label_smoothing: 0.0
+  obj_focal_gamma: 0.0
+  obj_focal_alpha: null
+
+augment:
+  enabled: true
+  mosaic_prob: 0.0
+  hflip_prob: 0.5
+  color_prob: 0.3
+  brightness: 0.15
+  contrast: 0.15
+  saturation: 0.15
+  scale_translate_prob: 0.1
+  scale_min: 0.9
+  scale_max: 1.1
+  translate: 0.05
+
+early_stopping:
+  enabled: false
+  monitor: "map50"
+  patience: 4
+  min_delta: 0.001
+  start_epoch: 5
+
+model:
+  name: "resnet50_yolov3"
+  pretrained: true
+  freeze_backbone: false
+  imagenet_normalize: true
+
+postprocess:
+  enabled: true
+  class_conf_thresholds:
+    cat: 0.30
+    dog: 0.35
+    person: 0.40
+    chair: 0.40
+    car: 0.45
+  max_detections_per_image: 50

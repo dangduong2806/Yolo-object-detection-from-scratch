@@ -1,0 +1,89 @@
+<my_submission>/
+├── public/ <vị trí của public/, không cần nộp lại thư mục public>
+├── models/
+├── utils/
+├── train.py
+├── predict.py
+├── README.md
+└── requirements.txt
+
+Lệnh suy luận bắt buộc:
+python predict.py \
+  --image_dir /path/to/images \
+  --output predictions.json
+
+
+Lệnh huấn luyện bắt buộc:
+python train.py \
+  --train_data ./public/annotations/train.json \
+  --val_data ./public/annotations/val.json \
+  --image_dir ./public/train/images \
+  --val_image_dir ./public/val/images \
+  --checkpoint_dir ./models/
+
+Lệnh huấn luyện trên phải chạy được và lưu mô hình tốt nhất vào ./models/best.pth. Sinh viên có thể thêm tham số khác nếu cần.
+
+Tệp README.md cần nêu rõ:
+
+Cách cài đặt môi trường.
+Cách huấn luyện.
+Cách chạy suy luận.
+Vị trí đặt mô hình hoặc trọng số mô hình.
+
+Định dạng kết quả dự đoán:
+Tệp predictions.json phải là 1 mảng json:
+[
+  {
+    "image_id": "img_7fd91a4c2e30.jpg",
+    "boxes": [
+      {
+        "class": "person",
+        "confidence": 0.91,
+        "bbox": [48, 72, 210, 356]
+      }
+    ]
+  }
+]
+
+Quy định:
+
+image_id là tên file ảnh trong thư mục ảnh cần suy luận.
+class thuộc 5 lớp quy định.
+confidence là độ tin cậy, nằm trong đoạn [0, 1].
+bbox là [xmin, ymin, xmax, ymax].
+Tọa độ bbox tính theo điểm ảnh trên ảnh gốc.
+Ảnh không phát hiện đối tượng nào vẫn cần xuất "boxes": [].
+trong public/annotations có các file predictions.json (chính xác 100%) để làm mẫu.
+
+Chấm tự động:
+Ví dụ:
+python tools/evaluate_predictions.py \
+  --ground_truth ./private/hidden_test_annotations.json \
+  --predictions predictions.json \
+  --output score.json
+
+# CHẤM BẰNG DOCKER
+Chấm bằng Dockerfile (để ngang hàng với `my_submission/`)
+
+```bash
+docker build -t object-detection-exam:2026 .
+
+cd my_submission
+
+mkdir -p grading_outputs
+
+docker run --rm --gpus all \
+  -v "$PWD/public/val/images:/exam/val_images:ro" \
+  -v "$PWD:/workspace" \
+  -v "$PWD/grading_outputs:/exam/outputs" \
+  object-detection-exam:2026 \
+  python predict.py \
+    --image_dir /exam/val_images \
+    --output /exam/outputs/val_predictions.json
+
+python public/tools/evaluate_predictions.py \
+  --ground_truth public/annotations/val.json \
+  --predictions grading_outputs/val_predictions.json \
+  --output grading_outputs/val_score.json
+```
+

@@ -6,6 +6,8 @@ from model import YOLOv3
 from loss import YOLOv3Loss
 from dataset import YOLODataset
 
+from model_resnet_yolov3 import ResNet50YOLOv3
+
 from train import (
     load_config,
     set_seed,
@@ -29,7 +31,8 @@ def build_scheduler(config, optimizer):
     if scheduler_name == "cosine":
         return torch.optim.lr_scheduler.CosineAnnealingLR(
             optimizer,
-            T_max=config["train"]["epochs"],
+            # T_max=config["train"]["epochs"],
+            T_max=config["train"].get("phase_epochs", config["train"]["epochs"]),
             eta_min=config["train"].get("min_learning_rate", 1e-6),
         )
 
@@ -99,6 +102,8 @@ def main():
             raise ImportError("augment.enabled=True but augmentations.py is not available.")
         train_augmenter = DetectionAugmenter(augment_config)
 
+    imagenet_normalize = config.get("model", {}).get("imagenet_normalize", False)
+
     train_dataset = YOLODataset(
         json_path=config["data"]["train_json"],
         root_dir=config["data"]["root_dir"],
@@ -108,6 +113,7 @@ def main():
         ignore_iou_thresh=config["data"]["ignore_iou_thresh"],
         use_letterbox=config["data"]["use_letterbox"],
         augmenter=train_augmenter,
+        imagenet_normalize=imagenet_normalize,
     )
 
     val_dataset = YOLODataset(
@@ -119,6 +125,7 @@ def main():
         ignore_iou_thresh=config["data"]["ignore_iou_thresh"],
         use_letterbox=config["data"]["use_letterbox"],
         augmenter=None,
+        imagenet_normalize=imagenet_normalize,
     )
 
     train_loader = DataLoader(
@@ -139,10 +146,33 @@ def main():
         drop_last=False,
     )
 
-    model = YOLOv3(
-        in_channels=3,
-        num_classes=num_classes,
-    ).to(device)
+    # model = YOLOv3(
+    #     in_channels=3,
+    #     num_classes=num_classes,
+    # ).to(device)
+
+    model_name = config.get("model", {}).get("name", "yolov3_from_scratch")
+
+    if model_name == "resnet50_yolov3":
+        model = ResNet50YOLOv3(
+            in_channels=3,
+            num_classes=num_classes,
+            pretrained=config.get("model", {}).get("pretrained", True),
+            freeze_backbone=config.get("model", {}).get("freeze_backbone", False),
+        ).to(device)
+    else:
+        model = YOLOv3(
+            in_channels=3,
+            num_classes=num_classes,
+        ).to(device)
+
+    # loss_fn = YOLOv3Loss(
+    #     num_classes=num_classes,
+    #     lambda_box=config["loss"]["lambda_box"],
+    #     lambda_obj=config["loss"]["lambda_obj"],
+    #     lambda_noobj=config["loss"]["lambda_noobj"],
+    #     lambda_class=config["loss"]["lambda_class"],
+    # )
 
     loss_fn = YOLOv3Loss(
         num_classes=num_classes,
@@ -150,10 +180,21 @@ def main():
         lambda_obj=config["loss"]["lambda_obj"],
         lambda_noobj=config["loss"]["lambda_noobj"],
         lambda_class=config["loss"]["lambda_class"],
+        box_loss_type=config["loss"].get("box_loss_type", "mse"),
+        obj_label_smoothing=config["loss"].get("obj_label_smoothing", 0.0),
+        class_label_smoothing=config["loss"].get("class_label_smoothing", 0.0),
+        obj_focal_gamma=config["loss"].get("obj_focal_gamma", 0.0),
+        obj_focal_alpha=config["loss"].get("obj_focal_alpha", None),
     )
 
+    # optimizer = torch.optim.Adam(
+    #     params=model.parameters(),
+    #     lr=config["train"]["learning_rate"],
+    #     weight_decay=config["train"]["weight_decay"],
+    # )
+
     optimizer = torch.optim.Adam(
-        params=model.parameters(),
+        params=filter(lambda p: p.requires_grad, model.parameters()),
         lr=config["train"]["learning_rate"],
         weight_decay=config["train"]["weight_decay"],
     )
@@ -165,14 +206,24 @@ def main():
         map_location=device,
     )
 
+    # model.load_state_dict(checkpoint["model_state_dict"])
+    # optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+
     model.load_state_dict(checkpoint["model_state_dict"])
-    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+
+    load_optimizer_state = config["train"].get("load_optimizer_state", True)
+
+    if load_optimizer_state and "optimizer_state_dict" in checkpoint:
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        print("Loaded optimizer state from checkpoint.")
+    else:
+        print("Skipped optimizer state. New optimizer is used.")
 
     resumed_epoch = int(checkpoint["epoch"])
     start_epoch = resumed_epoch + 1
     epochs = config["train"]["epochs"]
 
-    fast_forward_scheduler(scheduler, resumed_epoch)
+    # fast_forward_scheduler(scheduler, resumed_epoch)
 
     best_val_loss = checkpoint.get("val_loss", float("inf"))
     best_map50 = checkpoint.get("map50", 0.0)
@@ -182,6 +233,7 @@ def main():
     best_val_loss_at_best_map = best_val_loss
 
     map_eval_interval = config["train"]["map_eval_interval"]
+    map_eval_start_epoch = config["train"].get("map_eval_start_epoch", 1)
 
     print("Resume YOLOv3 training")
     print(f"Device       : {device}")
@@ -219,10 +271,18 @@ def main():
             device=device,
         )
 
+        # should_eval_map = (
+        #     epoch == 1
+        #     or epoch % map_eval_interval == 0
+        #     or epoch == epochs
+        # )
+
         should_eval_map = (
-            epoch == 1
-            or epoch % map_eval_interval == 0
-            or epoch == epochs
+            epoch >= map_eval_start_epoch
+            and (
+                epoch % map_eval_interval == 0
+                or epoch == epochs
+            )
         )
 
         map50 = None
@@ -234,8 +294,8 @@ def main():
                 model=model,
                 config=config,
                 device=device,
-                conf_thresh=0.25,
-                iou_thresh=0.5,
+                conf_thresh=config["train"].get("map_conf_thresh", 0.25),
+                iou_thresh=config["train"].get("map_nms_iou_thresh", 0.5),
             )
 
             map_metrics = compute_map50_from_predictions(

@@ -91,12 +91,22 @@ def parse_args():
     parser.add_argument("--save-predictions", type=str, default=None)
     parser.add_argument("--save-metrics", type=str, default=None)
 
+    parser.add_argument(
+        "--split",
+        type=str,
+        default="val",
+        choices=["train", "val"],
+    )
+
     return parser.parse_args()
 
 def main():
     args = parse_args()
 
     config = load_config(args.config)
+
+    if args.split == "train":
+        config["data"]["val_json"] = config["data"]["train_json"]
 
     requested_device = config["train"]["device"]
     if requested_device == "cuda" and not torch.cuda.is_available():
