@@ -10,7 +10,7 @@ Nếu dùng Docker, môi trường cần có PyTorch, TorchVision, Pillow, NumPy
 
 ## Trọng số mô hình
 
-Checkpoint dùng để nộp nằm tại:
+Checkpoint dùng để test được lưu tại:
 
 ```text
 models/best.pth
@@ -32,6 +32,9 @@ python predict.py \
   --output predictions.json \
   --weights-url "https://your-direct-download-url/best.pth"
 ```
+
+Khi thầy chạy bằng lệnh Docker, model weight sẽ được load từ Hugging face.
+
 
 Checkpoint này là `best_map_resnet50_mse_phase2.pth`, được chọn bằng grid search inference trên validation với:
 
